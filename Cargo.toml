@@ -1,0 +1,38 @@
+[package]
+name = "dingtalk-channel-sdk"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+description = "DingTalk Channel SDK for Rust — stream long connection, inbound normalization, safety pipeline and streaming AI-card replies behind one high-level Channel."
+license = "MIT"
+repository = "https://github.com/DingTalk-Real-AI/dingtalk-channel-sdk-rust"
+keywords = ["dingtalk", "bot", "stream", "ai-card", "sdk"]
+categories = ["api-bindings"]
+
+[lib]
+name = "dingtalk_channel"
+path = "src/lib.rs"
+
+[dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync", "net"] }
+tokio-util = "0.7"
+tokio-tungstenite = { version = "0.27", features = ["rustls-tls-webpki-roots"] }
+futures-util = "0.3"
+reqwest = { version = "0.12", default-features = false, features = ["json", "multipart", "rustls-tls"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+rand = "0.8"
+sha2 = "0.10"
+hmac = "0.12"
+base64 = "0.22"
+urlencoding = "2"
+lru = "0.12"
+local-ip-address = "0.6"
+
+[dev-dependencies]
+wiremock = "=0.6.4"
+tempfile = "3"
+
+[profile.release]
+lto = true
