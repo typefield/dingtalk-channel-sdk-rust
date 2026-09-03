@@ -27,7 +27,7 @@ sha2 = "0.10"
 hmac = "0.12"
 base64 = "0.22"
 urlencoding = "2"
-lru = "0.12"
+lru = "0.18"
 local-ip-address = "0.6"
 
 [dev-dependencies]
