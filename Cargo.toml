@@ -5,7 +5,7 @@ edition = "2021"
 rust-version = "1.75"
 description = "DingTalk Channel SDK for Rust — stream long connection, inbound normalization, safety pipeline and streaming AI-card replies behind one high-level Channel."
 license = "MIT"
-repository = "https://github.com/DingTalk-Real-AI/dingtalk-channel-sdk-rust"
+repository = "https://github.com/typefield/dingtalk-channel-sdk-rust"
 keywords = ["dingtalk", "bot", "stream", "ai-card", "sdk"]
 categories = ["api-bindings"]
 
