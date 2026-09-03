@@ -98,7 +98,7 @@ pub fn host_allowed(host: &str, allowlist: &[String]) -> bool {
             return true;
         }
         if let Some(suffix) = e.strip_prefix("*.") {
-            if h.ends_with(&suffix) {
+            if h.ends_with(&format!(".{suffix}")) {
                 return true;
             }
         }

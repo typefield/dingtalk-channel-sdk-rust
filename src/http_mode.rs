@@ -31,8 +31,6 @@ pub fn verify_http_sign(
         ts *= 1000; // seconds → millis
     }
     if !tolerance.is_zero() {
-        let now = crate::types::IncomingMessage::default(); // placeholder to keep imports tidy
-        let _ = now;
         let now_ms = now_millis();
         let age = (now_ms - ts).abs();
         if age > tolerance.as_millis() as i64 {

@@ -5,8 +5,8 @@
 //! unified safety pipeline, and streaming AI-card replies, all behind one
 //! high-level [`Channel`].
 //!
-//! Implements the shared four(+Rust)-language contract in `SPEC.md`
-//! (E1–E10 acceptance checklist).
+//! Implements the shared multi-language channel contract (E1–E10 acceptance
+//! checklist) also used by the Go, Java, Python and Node.js SDKs.
 //!
 //! ## Minimal example
 //!
