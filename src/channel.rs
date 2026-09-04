@@ -380,11 +380,90 @@ impl Channel {
         download_code: impl Into<String>,
         msg_id: impl Into<String>,
     ) -> Result<Vec<u8>> {
-        let download_code = download_code.into();
+        let url = self
+            .resolve_media_url(download_code.into(), msg_id.into())
+            .await?;
+        let resp = self.fetch_media(url).await?;
+        Ok(resp.bytes().await?.to_vec())
+    }
+
+    /// Stream a media file to a local path without buffering it whole
+    /// (aligned with the lark channel-sdk `downloadResourceToFile`).
+    ///
+    /// SSRF-guarded like [`Channel::download_file`]; the parent directory of
+    /// `dest_path` must already exist; the bytes are written to a same-dir
+    /// temp file that is atomically renamed on success, so a failure never
+    /// leaves a partial file behind. Returns the number of bytes written.
+    pub async fn download_file_to_file(
+        &self,
+        download_code: impl Into<String>,
+        msg_id: impl Into<String>,
+        dest_path: impl AsRef<std::path::Path>,
+    ) -> Result<u64> {
+        let dest = dest_path.as_ref();
+        let file_name = dest
+            .file_name()
+            .and_then(|s| s.to_str())
+            .ok_or_else(|| Error::channel("destPath has no valid file name"))?;
+        let parent = dest
+            .parent()
+            .ok_or_else(|| Error::channel("destPath has no parent directory"))?;
+
+        let url = self
+            .resolve_media_url(download_code.into(), msg_id.into())
+            .await?;
+        let resp = self.fetch_media(url).await?;
+
+        let tmp_path = parent.join(format!(
+            ".{file_name}.tmp-{}-{}",
+            std::process::id(),
+            rand::random::<u32>()
+        ));
+        let mut out = match tokio::fs::File::create(&tmp_path).await {
+            Ok(f) => f,
+            Err(e) => {
+                return Err(Error::channel(format!(
+                    "cannot create temp file in {}: {e}",
+                    parent.display()
+                )));
+            }
+        };
+
+        let mut n: u64 = 0;
+        let mut resp = resp;
+        let mut write_err: Option<crate::error::Error> = None;
+        while let Some(chunk) = match resp.chunk().await {
+            Ok(Some(c)) => Some(c),
+            Ok(None) => None,
+            Err(e) => {
+                write_err = Some(Error::channel(format!("download failed: {e}")));
+                None
+            }
+        } {
+            if let Err(e) = tokio::io::AsyncWriteExt::write_all(&mut out, &chunk).await {
+                write_err = Some(Error::channel(format!("write to temp file failed: {e}")));
+                break;
+            }
+            n += chunk.len() as u64;
+        }
+        drop(out);
+
+        if let Some(e) = write_err {
+            let _ = tokio::fs::remove_file(&tmp_path).await;
+            return Err(e);
+        }
+        if let Err(e) = tokio::fs::rename(&tmp_path, dest).await {
+            let _ = tokio::fs::remove_file(&tmp_path).await;
+            return Err(Error::channel(format!("atomic rename failed: {e}")));
+        }
+        Ok(n)
+    }
+
+    /// Exchange a download code for its media URL (SSRF-guarded).
+    async fn resolve_media_url(&self, download_code: String, msg_id: String) -> Result<String> {
         if download_code.is_empty() {
             return Err(Error::channel("downloadCode cannot be empty"));
         }
-        let msg_id = msg_id.into();
         let path = format!(
             "/v1.0/robot/messageFiles/download?downloadCode={}&messageId={}&robotCode={}",
             urlencoding::encode(&download_code),
@@ -410,12 +489,17 @@ impl Channel {
             &self.core.cfg.ssrf_allowlist,
         )
         .await?;
+        Ok(url)
+    }
+
+    /// GET a validated media URL and require HTTP 200.
+    async fn fetch_media(&self, url: String) -> Result<reqwest::Response> {
         let resp = self.core.http.get(url).send().await?;
         let status = resp.status().as_u16();
         if status != 200 {
             return Err(Error::channel(format!("download failed: http {status}")));
         }
-        Ok(resp.bytes().await?.to_vec())
+        Ok(resp)
     }
 }
 

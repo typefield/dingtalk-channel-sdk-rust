@@ -79,8 +79,8 @@ pub(crate) fn parse_content(
     match msg_type {
         "text" => (convert_text(m), empty.clone(), Vec::new()),
         "richText" => {
-            let (t, mentions) = convert_rich_text(m);
-            (t, empty, mentions)
+            let (t, mentions, r) = convert_rich_text(m);
+            (t, r, mentions)
         }
         "picture" => {
             let (t, r) = convert_picture(m);
@@ -135,12 +135,21 @@ fn convert_markdown(m: &serde_json::Map<String, serde_json::Value>) -> String {
 
 // ── converters_richtext ──
 
-fn convert_rich_text(m: &serde_json::Map<String, serde_json::Value>) -> (String, Vec<Mention>) {
+/// Aligned with the lark channel-sdk post attachment zone: picture/file
+/// segments carry a DingTalk download code and are surfaced as resources.
+/// Dirty-data defense: segments whose values are not strings (or have empty
+/// codes) are skipped without affecting the rest; codes are deduped within
+/// one message.
+fn convert_rich_text(
+    m: &serde_json::Map<String, serde_json::Value>,
+) -> (String, Vec<Mention>, Vec<Resource>) {
     let mut sb = String::new();
     let mut mentions = Vec::new();
+    let mut resources: Vec<Resource> = Vec::new();
+    let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
     let arr = match m.get("richText").and_then(|v| v.as_array()) {
         Some(a) => a,
-        None => return (String::new(), mentions),
+        None => return (String::new(), mentions, resources),
     };
     for item in arr {
         let elem = match item.as_object() {
@@ -172,10 +181,39 @@ fn convert_rich_text(m: &serde_json::Map<String, serde_json::Value>) -> (String,
                     }
                 }
             }
+            "picture" => {
+                // The segment value is the download code itself; accept only
+                // non-empty strings so dirty wire data can't sneak in.
+                let code = elem.get("picture").and_then(|v| v.as_str()).unwrap_or("");
+                if code.is_empty() || !seen.insert(code.to_string()) {
+                    continue;
+                }
+                resources.push(Resource {
+                    r#type: "image".into(),
+                    download_code: code.into(),
+                    ..Default::default()
+                });
+            }
+            "file" => {
+                let code = elem
+                    .get("downloadCode")
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("");
+                let name = elem.get("fileName").and_then(|v| v.as_str()).unwrap_or("");
+                if code.is_empty() || !seen.insert(code.to_string()) {
+                    continue;
+                }
+                resources.push(Resource {
+                    r#type: "file".into(),
+                    download_code: code.into(),
+                    file_name: name.into(),
+                    ..Default::default()
+                });
+            }
             _ => {}
         }
     }
-    (sb, mentions)
+    (sb, mentions, resources)
 }
 
 // ── converters_media ──
