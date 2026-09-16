@@ -495,7 +495,7 @@ async fn policy_blocklist_emits_reject_event() {
     assert_eq!(handled.load(Ordering::SeqCst), 0);
 }
 
-// ── richText resource extraction (lark attachment-zone port) ──
+// ── richText resource extraction ──
 
 fn rich_text_body(msg_id: &str, segments: Value) -> Value {
     let mut body = callback_body("", "", msg_id);
@@ -550,7 +550,7 @@ fn rich_text_dirty_segments_yield_no_resources() {
     );
 }
 
-// ── download_file_to_file (lark downloadResourceToFile port) ──
+// ── download_file_to_file ──
 
 const MEDIA_BYTES: &[u8] = b"dingtalk-media-bytes-rust-port";
 

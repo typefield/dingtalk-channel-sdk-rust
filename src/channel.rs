@@ -387,8 +387,7 @@ impl Channel {
         Ok(resp.bytes().await?.to_vec())
     }
 
-    /// Stream a media file to a local path without buffering it whole
-    /// (aligned with the lark channel-sdk `downloadResourceToFile`).
+    /// Stream a media file to a local path without buffering it whole.
     ///
     /// SSRF-guarded like [`Channel::download_file`]; the parent directory of
     /// `dest_path` must already exist; the bytes are written to a same-dir
