@@ -1,7 +1,7 @@
 # Releasing DingTalk Channel SDK for Rust
 
 This runbook is for maintainers publishing `dingtalk-channel-sdk` to crates.io.
-The release model follows the Lark channel SDK family: a reviewed commit on
+The release model: a reviewed commit on
 `main`, an annotated `v<version>` tag, and a tag-triggered publishing workflow
 (`.github/workflows/release.yml`) that verifies the version, reruns the tests,
 publishes to crates.io, and cuts the GitHub Release from `CHANGELOG.md`.

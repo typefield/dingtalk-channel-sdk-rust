@@ -3,7 +3,7 @@
 [English](RELEASING.md) | 简体中文
 
 本 runbook 供维护者将 `dingtalk-channel-sdk` 发布到 crates.io 使用。
-发布模型与 Lark channel SDK 家族一致:`main` 上一个通过评审的提交、一个
+发布模型:`main` 上一个通过评审的提交、一个
 `v<version>` 注释 tag、由 tag 触发的发布工作流
 (`.github/workflows/release.yml`)负责校验版本、重跑测试、发布到 crates.io,
 并从 `CHANGELOG.md` 生成 GitHub Release。

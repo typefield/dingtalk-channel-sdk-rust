@@ -135,8 +135,8 @@ fn convert_markdown(m: &serde_json::Map<String, serde_json::Value>) -> String {
 
 // ── converters_richtext ──
 
-/// Aligned with the lark channel-sdk post attachment zone: picture/file
-/// segments carry a DingTalk download code and are surfaced as resources.
+/// richText picture/file segments carry a DingTalk download code and are
+/// surfaced as resources.
 /// Dirty-data defense: segments whose values are not strings (or have empty
 /// codes) are skipped without affecting the rest; codes are deduped within
 /// one message.
