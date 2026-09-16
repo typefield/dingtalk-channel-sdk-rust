@@ -2,7 +2,7 @@
 name = "dingtalk-channel-sdk"
 version = "0.1.0"
 edition = "2021"
-rust-version = "1.75"
+rust-version = "1.85"
 description = "DingTalk Channel SDK for Rust — stream long connection, inbound normalization, safety pipeline and streaming AI-card replies behind one high-level Channel."
 license = "MIT"
 repository = "https://github.com/typefield/dingtalk-channel-sdk-rust"

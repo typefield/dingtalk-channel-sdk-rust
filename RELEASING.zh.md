@@ -14,14 +14,14 @@ crates.io 的版本不可变更。请把 tag 推送当作一次对外生产变�
 ## 发布模型
 
 - 唯一来源:`typefield/dingtalk-channel-sdk-rust` 的 `main` 上通过评审、
-  CI 全绿(Test 1.75.0 / Test stable / Lint / Package)的提交。
+  CI 全绿(Test 1.85.0 / Test stable / Lint / Package)的提交。
 - 发布标识:该提交上的注释 tag `v<version>`。tag 与 `Cargo.toml` 不一致时
   工作流会拒绝发布。
 - 产物:crates.io 上的 `dingtalk-channel-sdk` crate,由 `Release` 工作流以
   `cargo publish --locked` 发布。
 - 发布说明:`CHANGELOG.md` 的 `## [x.y.z]` 小节,由工作流自动抽取为
   GitHub Release 正文。
-- MSRV:`Cargo.toml` 的 `rust-version = "1.75"` 是发布门禁(CI 含 1.75.0
+- MSRV:`Cargo.toml` 的 `rust-version = "1.85"` 是发布门禁(CI 含 1.85.0
   job)。
 
 ## 所需权限与本地前置条件
@@ -35,7 +35,7 @@ crates.io 的版本不可变更。请把 tag 推送当作一次对外生产变�
    `crates.io` deployment environment 的 `CARGO_REGISTRY_TOKEN`
    environment secret 里;严禁提交入库、打印输出,或写在 `secrets.*`
    之外的 workflow `env:` 中。
-3. Rust 工具链 1.75.0 与 stable,`cargo` 在 `PATH` 上。
+3. Rust 工具链 1.85.0 与 stable,`cargo` 在 `PATH` 上。
 
 一次性仓库配置(已完成的可跳过):
 

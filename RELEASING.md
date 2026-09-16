@@ -12,7 +12,7 @@ change: review the version, commit, tests, and metadata before pushing it.
 ## Release model
 
 - Source of truth: a reviewed commit on `main` in
-  `typefield/dingtalk-channel-sdk-rust` with green CI (Test 1.75.0 / Test
+  `typefield/dingtalk-channel-sdk-rust` with green CI (Test 1.85.0 / Test
   stable / Lint / Package).
 - Release identity: an annotated Git tag named `v<version>` on that exact
   commit. The workflow refuses to publish when the tag does not match
@@ -21,8 +21,8 @@ change: review the version, commit, tests, and metadata before pushing it.
   `cargo publish --locked` by the `Release` workflow.
 - Release notes: the `## [x.y.z]` section of `CHANGELOG.md`, extracted
   automatically into the GitHub Release body.
-- MSRV: `rust-version = "1.75"` in `Cargo.toml` is a release gate (CI runs a
-  1.75.0 job).
+- MSRV: `rust-version = "1.85"` in `Cargo.toml` is a release gate (CI runs a
+  1.85.0 job).
 
 ## Required authority and local prerequisites
 
@@ -35,7 +35,7 @@ The release operator needs all of the following:
    as the `CARGO_REGISTRY_TOKEN` environment secret of the `crates.io`
    deployment environment. Never commit it, echo it, or place it in a workflow
    `env:` block outside `secrets.*`.
-3. Rust toolchain 1.75.0 and stable, plus `cargo` on `PATH`.
+3. Rust toolchain 1.85.0 and stable, plus `cargo` on `PATH`.
 
 One-time repository setup (already done unless the repo is recreated):
 

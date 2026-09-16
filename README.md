@@ -4,7 +4,7 @@ A conversation access layer decoupled from any agent runtime. It provides the
 DingTalk Stream connection, inbound message normalization, safety controls,
 proactive sends, and streaming AI-card replies behind one high-level `Channel`.
 
-Requires Rust 1.75 or newer.
+Requires Rust 1.85 or newer.
 
 ## Example
 
@@ -33,7 +33,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 cargo fmt --all -- --check
 cargo clippy --all-targets -- -D warnings
 cargo test --all-targets
-cargo +1.75.0 test --all-targets
+cargo +1.85.0 test --all-targets
 ```
 
 The mocked integration suite covers HTTP callbacks, deduplication, the complete
@@ -42,7 +42,7 @@ sends, media upload, and policy rejection.
 
 ## Release
 
-CI runs the checks above on every push and pull request (Rust 1.75 + stable),
+CI runs the checks above on every push and pull request (Rust 1.85 + stable),
 plus a `cargo package --locked` publish dry-run. To release:
 
 1. Update the version in `Cargo.toml` and add a `CHANGELOG.md` entry.
